@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// import { Link } from "react-router-dom";
+// import { Circle } from "./Components/circular";
+// import { Cards } from "./Components/cards";
+// import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+import { useQuery } from "@tanstack/react-query";
+
+// function App() {
+//   return (
+//     <center>
+//       <h1>ContentS</h1>
+//       <button>
+//         <Link to={"/step-form"}>step form</Link>
+//       </button>
+//       <button>
+//         <Link to={"/signup-form"}>signup form</Link>
+//       </button>
+//       <Circle />
+//       <Cards />
+//     </center>
+//   );
+// }
+
+const POST = [
+  { id: 1, title: "post1" },
+  { id: 2, title: "post2" },
+];
+
+const App = () => {
+  const postQuery = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => wait(1000).then(() => [...POST]),
+  });
+
+  if (postQuery.isLoading) return <h1>loading...</h1>;
+
+  if (postQuery.isError) return <p>{JSON.stringify(postQuery.error)}</p>;
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      {postQuery.data?.map((post) => (
+        <div key={post.id}>{post.title}</div>
+      ))}
+    </div>
+  );
+};
+
+function wait(duration: number) {
+  return new Promise((resolve) => setTimeout(resolve, duration));
 }
 
-export default App
+export default App;
